@@ -10,7 +10,7 @@ const esClient = new es.Client({host: 'localhost:9200'});
 
 const kafkaClient = new kafka.KafkaClient({kafkaHost: 'localhost:9092'});
 let HighLevelProducer = kafka.HighLevelProducer;
-let Consumer = kafka.Consumer;
+// let Consumer = kafka.Consumer;
 let ConsumerGroup = kafka.ConsumerGroup;
 
 let producer = new HighLevelProducer(kafkaClient);
