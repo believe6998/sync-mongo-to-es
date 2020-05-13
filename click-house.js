@@ -38,13 +38,15 @@ const pushDataToKafka = (dataToPush) => {
         console.log(error);
     }
 };
-// se lấy từ khóa người dùng nhập ở đây
+// lấy từ khóa người dùng nhập ở đây
 let data = {
     'keyword': 'chung cư hola',
-    'userId': 113
+    'userId': 113 // có thể null
 }
+
 pushDataToKafka(JSON.stringify(data));
 
+// nhận message từ kafka (topic demo_ch)
 let consumer = new Consumer(
     kafkaClient,
     [{topic: 'demo_ch', partition: 0}],
@@ -53,6 +55,7 @@ let consumer = new Consumer(
 consumer.on('message', function (message) {
     if (isJson(message.value)){
         let data = JSON.parse(message.value);
+        // insert message nhận được vào bảng demo_ch của ClickHouse
         let query = `INSERT INTO demo_ch FORMAT Values ('${moment().format('YYYY-MM-DD')}','${data.keyword}',${data.userId})`
         ch.query(query).exec(function (err) {
             if (err) {
@@ -62,6 +65,7 @@ consumer.on('message', function (message) {
     }
 });
 
+// select ra tất cả bản ghi trong trong bảng demo_ch của ClickHouse
 ch.query('SELECT * FROM demo_ch').exec(function (err, rows) {
     console.log(rows)
 });
