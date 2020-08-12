@@ -5,17 +5,43 @@ let Consumer = kafka.Consumer;
 
 let consumer = new Consumer(
     kafkaClient,
-    [{topic: 'my_test'}],
-    {autoCommit: true}
+    [{topic: 'test'}],
+    {
+        autoCommit: false
+    }
 );
+let minBatchSize = 10
+let buffer = []
 consumer.on('message', function (message) {
-    console.log(message.value)
-    consumer.pause()
+    buffer.push(message.value)
+    if( buffer.length >= minBatchSize){
+        consumer.commit((error, data) => {
+            if (error) {
+                console.error(error);
+            } else {
+                console.log(buffer)
+                console.log('Commit success: ', data);
+                buffer = []
+            }
+        });
+    }
 });
 
-setInterval( () => {
-    consumer.resume()
-}, 1000*30)
+let timer = setInterval(function(){
+    if (buffer.length > 0){
+        consumer.commit((error, data) => {
+            if (error) {
+                console.error(error);
+            } else {
+                console.log(buffer)
+                console.log('Commit success: ', data);
+                buffer = []
+            }
+        });
+    }
+    }, 10000)
+
+
 
 
 
