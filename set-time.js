@@ -7,39 +7,47 @@ let consumer = new Consumer(
     kafkaClient,
     [{topic: 'test'}],
     {
-        autoCommit: false
+        autoCommit: false,
+        fetchMinBytes: 100,
+        fetchMaxWaitMs: 10000
     }
 );
-let minBatchSize = 10
+let minBatchSize = 3
 let buffer = []
+let i= 0
 consumer.on('message', function (message) {
-    buffer.push(message.value)
-    if( buffer.length >= minBatchSize){
-        consumer.commit((error, data) => {
-            if (error) {
-                console.error(error);
-            } else {
-                console.log(buffer)
-                console.log('Commit success: ', data);
-                buffer = []
-            }
-        });
-    }
+    // buffer.push(message.value)
+    // if (buffer.length >= minBatchSize) {
+    //     consumer.commit((error, data) => {
+    //         if (error) {
+    //             console.error(error);
+    //         } else {
+    //             console.log(buffer)
+    //             console.log('Commit success: ', data);
+    //             buffer = []
+    //         }
+    //     });
+    // }
+    console.log(i)
+    i++
 });
 
-let timer = setInterval(function(){
-    if (buffer.length > 0){
-        consumer.commit((error, data) => {
-            if (error) {
-                console.error(error);
-            } else {
-                console.log(buffer)
-                console.log('Commit success: ', data);
-                buffer = []
-            }
-        });
-    }
-    }, 10000)
+// setInterval(function () {
+//     if (buffer.length > 0) {
+//             consumer.commit((error, data) => {
+//                 if (error) {
+//                     console.error(error);
+//                 } else {
+//                     console.log(buffer)
+//                     console.log('Commit success: ', data);
+//                     buffer = []
+//                 }
+//             });
+//     }
+// }, 3000)
+
+
+
 
 
 

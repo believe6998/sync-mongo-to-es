@@ -9,7 +9,7 @@ const pushDataToKafka = (data) => {
     try {
         let payloadToKafkaTopic = [
             {
-                topic: 'my_test',
+                topic: 'test',
                 messages: data
             }
         ];
@@ -23,7 +23,11 @@ const pushDataToKafka = (data) => {
     }
 };
 
-// pushDataToKafka(data)
+setInterval(function (){
+    for (let i = 0; i < 100; i++) {
+        pushDataToKafka(i)
+    }
+},1000)
 
 
 
